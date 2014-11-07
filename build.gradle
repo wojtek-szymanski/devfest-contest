@@ -1,0 +1,17 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+
+sourceCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '0.7-groovy-2.0'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}

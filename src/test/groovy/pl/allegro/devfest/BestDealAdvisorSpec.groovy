@@ -28,6 +28,26 @@ class BestDealAdvisorSpec extends Specification {
         bestDeal.get().auctions.find { it.goodType == SHIRT } != null
     }
 
+    def "should return best deal for exact price"() {
+        given:
+        def auctions = [
+                new Auction("boots", BOOTS, 100),
+                new Auction("shirt", SHIRT, 100),
+        ]
+
+        def bestDealAdvisor = new BestDealAdvisor(auctions)
+        def dealRequirements = new DealCriteria(200, [BOOTS, SHIRT] as Set)
+
+        when:
+        def bestDeal = bestDealAdvisor.findBestDeal(dealRequirements)
+
+        then:
+        bestDeal.present
+        bestDeal.get().totalPrice == 200;
+        bestDeal.get().auctions.find { it.goodType == BOOTS } != null
+        bestDeal.get().auctions.find { it.goodType == SHIRT } != null
+    }
+
     def "should return empty optional if all of required good types does not fit in the budget"() {
         given:
         def auctions = [

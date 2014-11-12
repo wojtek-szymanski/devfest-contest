@@ -12,16 +12,17 @@ public class BestDealAdvisor {
     }
 
     public Optional<BestDeal> findBestDeal(DealCriteria dealRequirements) {
-        Collection<Auction> cheapestAuctions = findCheapestAuctions(dealRequirements.getGoodTypes());
+        Collection<Auction> cheapestAuctions = findCheapestAuctions(dealRequirements);
         return BestDeal.createBestDeal(dealRequirements, cheapestAuctions);
     }
 
-    private Collection<Auction> findCheapestAuctions(Set<GoodType> goodTypes) {
+    private Collection<Auction> findCheapestAuctions(DealCriteria dealRequirements) {
         return auctions.stream().
-                filter(t -> goodTypes.contains(t.getGoodType())).
-                collect(Collectors.groupingBy(t -> t.getGoodType())).
-                values().stream().map(a -> a.stream().
-                min(Comparator.comparing(p -> p.getPrice())).get()).
+                filter(auction -> dealRequirements.getGoodTypes().contains(auction.getGoodType())).
+                filter(auction -> dealRequirements.getBudget().compareTo(auction.getPrice()) >= 0).
+                collect(Collectors.groupingBy(Auction::getGoodType)).
+                values().stream().map(auctions -> auctions.stream().
+                min(Comparator.comparing(Auction::getPrice)).get()).
                 collect(Collectors.toList());
     }
 
